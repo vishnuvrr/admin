@@ -9,15 +9,13 @@ export default function User() {
   console.log("component reloaded");
 
   let deleteUser = (id) => {
-    let userDelete= window.confirm("Are you sure you want to delete?");
-    if(userDelete)
-    {
+    let userDelete = window.confirm("Are you sure you want to delete?");
+    if (userDelete) {
       let newUserData = userData.filter((ele, index) => index !== id);
       console.log(newUserData);
       setUserData(newUserData);
       userContext.setUserList(newUserData);
     }
-
   };
 
   return (
@@ -63,7 +61,6 @@ export default function User() {
               </tr>
             </tfoot>
             <tbody>
-
               {userData.map((obj, index) => {
                 return (
                   <tr>

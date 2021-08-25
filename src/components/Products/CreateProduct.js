@@ -1,38 +1,55 @@
 import axios from "axios";
-import React, { useState } from "react";
+import { useFormik } from "formik";
+import React from "react";
 import { useHistory } from "react-router-dom";
 
 export default function CreateProduct() {
-  const [productName, setProductName] = useState("");
-  const [price, setPrice] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const history=useHistory();
+  const history = useHistory();
 
-  async function addProduct(event)
-  {
-    event.preventDefault();
-    let productObj={productName,price,quantity};
+  const formik = useFormik({
+    initialValues: {
+      productName: "",
+      price: "",
+      quantity: "",
+    },
+    onSubmit: addProduct,
+    validate: (values) => {
+      let errors = {};
+      if (!values.productName) {
+        errors.productName = "required";
+      }
+      if (!values.price) {
+        errors.price = "required";
+      }
+      if (!values.quantity) {
+        errors.quantity = "required";
+      }
+      return errors;
+    },
+  });
+  console.log(formik.errors);
 
-    try{
-      let data=await axios.post("https://60ebd3abe9647b0017cdde6c.mockapi.io/product",productObj);
+  async function addProduct(values) {
+    let productObj = values;
+    console.log(values);
+    console.log(productObj);
+
+    try {
+      let data = await axios.post(
+        "https://60ebd3abe9647b0017cdde6c.mockapi.io/product",
+        productObj
+      );
       console.log(data);
-    }
-    catch(err)
-    {
+    } catch (err) {
       console.log(err);
     }
-
-
     history.push("/products");
-
-
-
     return false;
   }
 
   return (
-    <div style={{margin:"10px"}}>
-      <form onSubmit={(e)=>addProduct(e)}>
+    <div style={{ margin: "10px" }}>
+      <form onSubmit={formik.handleSubmit}>
         <div class="mb-3">
           <label for="productName" class="form-label">
             Product Name
@@ -40,10 +57,17 @@ export default function CreateProduct() {
           <input
             type="text"
             class="form-control"
-            onChange={(e) => setProductName(e.target.value)}
-            value={productName}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.productName}
+            name="productName"
             id="productName"
           />
+          {formik.touched.productName && formik.errors.productName ? (
+            <div style={{ color: "red" }}>Required</div>
+          ) : (
+            ""
+          )}
         </div>
         <div class="mb-3">
           <label for="price" class="form-label">
@@ -52,22 +76,36 @@ export default function CreateProduct() {
           <input
             type="text"
             class="form-control"
-            onChange={(e) => setPrice(e.target.value)}
-            value={price}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.price}
+            name="price"
             id="price"
           />
+          {formik.touched.price && formik.errors.price ? (
+            <div style={{ color: "red" }}>Required</div>
+          ) : (
+            ""
+          )}
         </div>
         <div class="mb-3">
           <label for="quantity" class="form-label">
-           Quantity
+            Quantity
           </label>
           <input
             type="text"
             class="form-control"
-            onChange={(e) => setQuantity(e.target.value)}
-            value={quantity}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.quantity}
+            name="quantity"
             id="quantity"
           />
+          {formik.touched.quantity && formik.errors.quantity ? (
+            <div style={{ color: "red" }}>Required</div>
+          ) : (
+            ""
+          )}
         </div>
         <button type="submit" class="btn btn-primary">
           Submit
